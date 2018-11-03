@@ -32,9 +32,32 @@ picked.col<-na.omit(picked.col)
 write.csv(picked.col, "min_seattle_listing.csv")
 #location, host quality, price, time.
 
+#question.1 
+#Does being a Superhost have a direct correlation with 
+# (price of establishment) or (type of property)?
 
+#slect superhost and type of property
+q1.set <- select(seattle_listings, host_is_superhost, property_type, price)
+#Delete dollar sign
+q1.set$price <- as.numeric(gsub("\\$", "", q1.set$price))
+#Delete NA
+q1.set<-na.omit(q1.set)
+#price & superhost
+q1.price.host <- group_by(q1.set, host_is_superhost) %>% 
+  summarize(mean = mean(price))
+#property & superhost
+q1.property.host <-group_by(q1.set,property_type) %>% 
+  filter(host_is_superhost == 't') %>% 
+  summarize(num.superhost = n())
 
+q2.property.host <-group_by(q1.set,property_type) %>% 
+  filter(host_is_superhost == 'f') %>% 
+  summarize(num.none = n())
 
+summary.host_type <- left_join(q2.property.host,q1.property.host, by = "property_type") %>% 
+  mutate(ratio = num.superhost/(num.superhost + num.none))
+
+View(summary.host_type)
 ############################################################################################################
 # Boston Data
 ############################################################################################################
