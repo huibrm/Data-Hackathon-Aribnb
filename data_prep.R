@@ -20,6 +20,13 @@ seattle_calendar <- read.csv( "seattle/seattle_calendar.csv", stringsAsFactors =
 # Seattle Reviews
 seattle_reviews <- read.csv( "seattle/seattle_reviews.csv", stringsAsFactors = FALSE)
 
+#slected columns
+picked.col <- select(seattle_listings, room_type, price)
+
+Seattle.neighbor<-group_by(picked.col,room_type) %>% 
+  summarize(mean = mean(price))
+
+
 ############################################################################################################
 # Boston Data
 ############################################################################################################
