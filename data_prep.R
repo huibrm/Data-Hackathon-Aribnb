@@ -45,6 +45,18 @@ q1.set<-na.omit(q1.set)
 #price & superhost
 q1.price.host <- group_by(q1.set, host_is_superhost) %>% 
   summarize(mean = mean(price))
+#price & property & superhost
+q1.price.property.host <- group_by(q1.set,property_type) %>% 
+  filter(host_is_superhost == 't') %>% 
+  summarize(mean.superhost = mean(price))
+
+q2.price.property.host <- group_by(q1.set,property_type) %>% 
+  filter(host_is_superhost == 'f') %>% 
+  summarize(mean.none = mean(price))
+
+summary.price <- left_join(q2.price.property.host,q1.price.property.host, by = "property_type") %>% 
+  mutate(difference = mean.superhost - mean.none)
+
 #property & superhost
 q1.property.host <-group_by(q1.set,property_type) %>% 
   filter(host_is_superhost == 't') %>% 
@@ -57,7 +69,7 @@ q2.property.host <-group_by(q1.set,property_type) %>%
 summary.host_type <- left_join(q2.property.host,q1.property.host, by = "property_type") %>% 
   mutate(ratio = num.superhost/(num.superhost + num.none))
 
-View(summary.host_type)
+View(q1.price.host)
 ############################################################################################################
 # Boston Data
 ############################################################################################################
